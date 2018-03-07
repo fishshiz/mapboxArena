@@ -115,10 +115,20 @@
                     // Using Turf, find the nearest hospital to library clicked
                     var nearestHospital = turf.nearest(libraryFeature, hospitals);
 
+                    var hospital = new mapboxgl.Popup();
+                    var library = new mapboxgl.Popup();
+                    
                     // If a nearest library is found
                     if (nearestHospital !== null) {
                         // Update the 'nearest-library' data source to include
                         // the nearest library
+                        hospital.setLngLat(nearestHospital.geometry.coordinates)
+                            .setHTML(nearestHospital.properties.Name)
+                            .addTo(map);
+                        library.setLngLat(libraryFeature.geometry.coordinates)
+                            .setHTML(libraryFeature.properties.Name)
+                            .addTo(map);
+
                         map.getSource('nearest-hospital').setData({
                             type: 'FeatureCollection',
                             features: [
@@ -136,6 +146,9 @@
                                 'circle-color': '#486DE0'
                             }
                         }, 'hospitals');
+                    } else {
+                        hospital.remove();
+                        library.remove();
                     }
                 });
     </script>
