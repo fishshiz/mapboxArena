@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href='https://api.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.css' rel='stylesheet' />
-    <script src='https://api.mapbox.com/mapbox.js/plugins/turf/v3.0.11/turf.min.js'></script>
+    <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
     <link rel="stylesheet" href="style.css" />
     <title>Turf</title>
 </head>
@@ -15,6 +15,8 @@
         <script src='https://api.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.js'></script>
 
     <div id='map'></div>
+
+    <div class="map-overlay" id='distance'><p>Click on a library!</p></div>
 
     <script>
         mapboxgl.accessToken = 'pk.eyJ1IjoiZmlzaHNoaXoiLCJhIjoiY2plODhmbnpoMDdxczMzbGFhaTd2djV2aSJ9.EPRw6PUFY0o_lVTihWMCdA';
@@ -108,12 +110,14 @@
                     // Return any features from the 'libraries' layer whenever the map is clicked
                     var libraryFeatures = map.queryRenderedFeatures(e.point, { layers: ['libraries'] });
                     if (!libraryFeatures.length) {
+                        document.getElementById('distance').innerHTML = '<p>Click on a library!</p>';
                         return;
                     }
                     var libraryFeature = libraryFeatures[0];
 
                     // Using Turf, find the nearest hospital to library clicked
-                    var nearestHospital = turf.nearest(libraryFeature, hospitals);
+                    var nearestHospital = turf.nearestPoint(libraryFeature, hospitals);
+                    var distance = turf.distance(libraryFeature, nearestHospital, { units: 'miles' }).toFixed(2);
 
                     var hospital = new mapboxgl.Popup();
                     var library = new mapboxgl.Popup();
@@ -146,8 +150,9 @@
                                 'circle-color': '#486DE0'
                             }
                         }, 'hospitals');
+                        document.getElementById('distance').innerHTML = `<p>${nearestHospital.properties.Name} is ${distance} miles from ${libraryFeature.properties.Name}.</p>`;
                     } else {
-                        hospital.remove();
+                        
                         library.remove();
                     }
                 });
