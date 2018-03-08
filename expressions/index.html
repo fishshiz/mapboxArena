@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset='utf-8' />
+    <title></title>
+    <meta name='viewport' content='initial-scale=1,maximum-scale=1,user-scalable=no' />
+    <script src='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.js'></script>
+    <link href='https://api.tiles.mapbox.com/mapbox-gl-js/v0.44.1/mapbox-gl.css' rel='stylesheet' />
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #map {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div id='map'></div>
+    <script>
+        mapboxgl.accessToken = 'pk.eyJ1IjoiZmlzaHNoaXoiLCJhIjoiY2plODhmbnpoMDdxczMzbGFhaTd2djV2aSJ9.EPRw6PUFY0o_lVTihWMCdA';
+        var map = new mapboxgl.Map({
+            container: 'map', // container id
+            style: 'mapbox://styles/fishshiz/cjehl89fn8zx42snve47fzbms', // stylesheet location
+            center: [-93.261, 44.971], // starting position [lng, lat]
+            zoom: 10 // starting zoom
+        });
+
+        map.on('load', function () {
+            map.addLayer({
+                id: 'historical-places',
+                type: 'circle',
+                source: {
+                    type: 'vector',
+                    url: 'mapbox://fishshiz.578vsxx4'
+                },
+                'source-layer': 'HPC_landmarks-6pzwde',
+                paint: {
+                    'circle-radius': [
+                        'interpolate', ['linear'], ['zoom'],
+                        10, ['/', ['-', 2018, ['number', ['get', 'Constructi'], 2018]], 30],
+                        13, ['/', ['-', 2018, ['number', ['get', 'Constructi'], 2018]], 10]
+                    ],
+                    'circle-opacity': 0.8,
+                    'circle-color': 'rgb(171, 72, 33)'
+                }
+            });
+        });
+
+    </script>
+
+</body>
+
+</html>
